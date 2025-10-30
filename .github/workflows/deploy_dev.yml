@@ -84,7 +84,7 @@ jobs:
 
       - name: Run Snyk test
         run: |
-          snyk test --severity-threshold=medium --sarif-file-output=snyk.sarif --file=pom.xml || true
+          snyk test --severity-threshold=medium --sarif-file-output=snyk.sarif --file=pom.xml --package-manager=maven || true
 
       - name: Upload Snyk results
         uses: github/codeql-action/upload-sarif@v3
