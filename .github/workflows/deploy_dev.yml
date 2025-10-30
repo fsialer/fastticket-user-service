@@ -69,11 +69,11 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --severity-threshold=medium --file=pom.xml
+          args: --severity-threshold=medium --sarif-file-output=snyk.sarif
 
       - name: Upload Snyk results
         uses: github/codeql-action/upload-sarif@v3
-        if: always()
+        if: always() && hashFiles('snyk.sarif') != ''
         with:
           sarif_file: snyk.sarif
 
