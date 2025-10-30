@@ -82,6 +82,9 @@ jobs:
       - name: Authenticate Snyk
         run: snyk auth ${{ secrets.SNYK_TOKEN }}
 
+      - name: Make mvnw executable
+        run: chmod +x mvnw || true
+
       - name: Run Snyk test
         env:
           SNYK_MAVEN_PATH: mvn
