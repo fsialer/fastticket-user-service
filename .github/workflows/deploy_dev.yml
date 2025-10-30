@@ -8,6 +8,12 @@ on:
     branches:
       - develop
 
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+  security-events: write
+
 env:
   IMAGE_NAME: fastticket-user-service
 
