@@ -70,6 +70,9 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
+      - name: Prepare Maven dependencies
+        run: mvn dependency:tree -q
+
       - name: Install Snyk CLI
         run: |
           curl -Lo snyk https://github.com/snyk/cli/releases/latest/download/snyk-linux
@@ -81,7 +84,7 @@ jobs:
 
       - name: Run Snyk test
         run: |
-          snyk test --severity-threshold=medium --sarif-file-output=snyk.sarif || true
+          snyk test --severity-threshold=medium --sarif-file-output=snyk.sarif --file=pom.xml || true
 
       - name: Upload Snyk results
         uses: github/codeql-action/upload-sarif@v3
