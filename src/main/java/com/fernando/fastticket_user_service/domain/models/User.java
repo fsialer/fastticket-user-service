@@ -14,12 +14,22 @@ public class User extends Person{
     private String email;
     private String password;
     private Set<Rol> roles;
+    private boolean confirmEmail;
 
     public User(String email, String password, Set<Rol> roles, String name, String lastName, String sex){
         super(0L,name,lastName,sex);
         this.email=email;
         this.password=password;
         this.roles=roles;
+    }
+
+    public  User(Long id, String email, String password,Set<Rol> roles, String name, String lastName, String sex,boolean confirmEmail) {
+        super(0L,name,lastName,sex);
+        this.id=id;
+        this.email=email;
+        this.password=password;
+        this.roles=roles;
+        this.confirmEmail=confirmEmail;
     }
 
     @Override

@@ -1,8 +1,11 @@
 package com.fernando.fastticket_user_service.infrastructure.adapters.input;
 
+import com.fernando.fastticket_user_service.application.ports.input.CheckCredentialUseCase;
 import com.fernando.fastticket_user_service.application.ports.input.RegisterUserUseCase;
 import com.fernando.fastticket_user_service.infrastructure.adapters.input.mappers.UserMapper;
 import com.fernando.fastticket_user_service.infrastructure.adapters.input.models.reponses.UserRegisterResponse;
+import com.fernando.fastticket_user_service.infrastructure.adapters.input.models.reponses.UserRoleResponse;
+import com.fernando.fastticket_user_service.infrastructure.adapters.input.models.requests.AuthRequest;
 import com.fernando.fastticket_user_service.infrastructure.adapters.input.models.requests.UserRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,7 @@ import java.net.URI;
 public class UserRestAdapter {
 
     private final RegisterUserUseCase registerUserUseCase;
+    private final CheckCredentialUseCase checkCredentialUseCase;
     private final UserMapper userMapper;
 
     @PostMapping("/register")
@@ -27,5 +31,11 @@ public class UserRestAdapter {
         UserRegisterResponse userRegisterResponse = userMapper.userResponseToUser(registerUserUseCase.registerUser(userMapper.userRequestToUser(rq)));
         String location = "/v1/users/register/".concat(userRegisterResponse.id().toString());
         return ResponseEntity.created(URI.create(location)).body(userRegisterResponse);
+    }
+
+    @PostMapping("/check")
+    public ResponseEntity<UserRoleResponse> checkCredentialUser(@Valid @RequestBody AuthRequest rq){
+        UserRoleResponse userRoleResponse = userMapper.userToUserRoleResponse(checkCredentialUseCase.checkCredential(userMapper.authRequestToUser(rq)));
+        return ResponseEntity.ok(userRoleResponse);
     }
 }

@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -77,5 +78,19 @@ class UserPersistenceAdapterTest {
         // Assert
         assertFalse(existsEmail);
         verify(userRepository, times(1)).existsByEmail(anyString());
+    }
+
+    @Test
+    @DisplayName("When Search User By Email Expect Information User")
+    void When_SearchUserByEmail_Expect_InformationUser(){
+        UserEntity userEntity=TestUtilUser.mockUserEntity();
+        User user=TestUtilUser.mockUser();
+        when(userRepository.findByEmail(anyString())).thenReturn(userEntity);
+        when(userPersistenceMapper.userEntityToUser(any())).thenReturn(user);
+        User useResult=userPersistenceAdapter.getUserByEmail("example@hotmail.com");
+        assertEquals(user,useResult);
+        verify(userRepository,times(1)).findByEmail(anyString());
+        verify(userPersistenceMapper,times(1)).userEntityToUser(any());
+
     }
 }

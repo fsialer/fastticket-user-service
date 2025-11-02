@@ -1,16 +1,30 @@
 package com.fernando.fastticket_user_service.infrastructure.adapters.output.persistence.mappers;
 
+import com.fernando.fastticket_user_service.domain.factory.PersonFactory;
+import com.fernando.fastticket_user_service.domain.models.Rol;
 import com.fernando.fastticket_user_service.domain.models.User;
 import com.fernando.fastticket_user_service.infrastructure.adapters.output.persistence.models.PersonEntity;
 import com.fernando.fastticket_user_service.infrastructure.adapters.output.persistence.models.RolEntity;
 import com.fernando.fastticket_user_service.infrastructure.adapters.output.persistence.models.UserEntity;
 import org.mapstruct.Mapper;
 
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface UserPersistenceMapper {
-    User userEntityToUser(UserEntity userEntity);
+    default User userEntityToUser(UserEntity userEntity){
+        return (User) PersonFactory.create(Map.of(
+                "id",userEntity.getId(),
+                "email",userEntity.getEmail(),
+                "password",userEntity.getPassword(),
+                "roles",userEntity.getRoles().stream()
+                        .map(rol-> new Rol(rol.getId(), rol.getCode(), rol.getDescription())).collect(Collectors.toSet()),
+                "confirmEmail",userEntity.getConfirmEmail(),
+                "name", userEntity.getPerson().getName(),
+                "lastName",userEntity.getPerson().getLastName(),
+                "sex",userEntity.getPerson().getSex()));
+    }
 
     default UserEntity userToUserEntity(User user){
         return UserEntity.builder()
@@ -24,6 +38,7 @@ public interface UserPersistenceMapper {
                                 .build())
                         .collect(Collectors.toSet()))
                 .person(PersonEntity.builder().name(user.getName()).lastName(user.getLastName()).sex(user.getSex()).build())
+                .confirmEmail(user.isConfirmEmail())
                 .build();
     }
 }

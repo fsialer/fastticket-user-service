@@ -1,10 +1,16 @@
 package com.fernando.fastticket_user_service.infrastructure.adapters.input;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fernando.fastticket_user_service.application.ports.input.CheckCredentialUseCase;
 import com.fernando.fastticket_user_service.application.ports.input.RegisterUserUseCase;
+import com.fernando.fastticket_user_service.domain.exceptions.EmailNotConfirmedException;
+import com.fernando.fastticket_user_service.domain.exceptions.PasswordInvalidedException;
 import com.fernando.fastticket_user_service.domain.exceptions.UserEmailExistsException;
+import com.fernando.fastticket_user_service.domain.exceptions.UserNotFoundException;
+import com.fernando.fastticket_user_service.domain.models.User;
 import com.fernando.fastticket_user_service.infrastructure.adapters.input.mappers.UserMapper;
 import com.fernando.fastticket_user_service.infrastructure.config.TestSecurityConfig;
+import com.fernando.fastticket_user_service.utils.TestUtilUser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +21,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.mockito.Mockito;
 
-
-import static com.fernando.fastticket_user_service.infrastructure.utils.ErrorCatalog.USER_BAD_PARAMETER;
+import static com.fernando.fastticket_user_service.infrastructure.utils.ErrorCatalog.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -35,6 +41,9 @@ class GlobalControllerAdviceTest {
 
     @MockitoBean
     private RegisterUserUseCase registerUserUseCase;
+
+    @MockitoBean
+    private CheckCredentialUseCase checkCredentialUseCase;
 
 
     @Test
@@ -74,6 +83,57 @@ class GlobalControllerAdviceTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(USER_BAD_PARAMETER.getCode()))
                 .andExpect(jsonPath("$.details[0]").value(org.hamcrest.Matchers.containsString("sex: Type sex is not valid")));
+    }
+
+    @Test
+    @DisplayName("Expect EmailNotConfirmedException When Sex Do Not Exists")
+    void Expect_EmailNotConfirmedException_When_EmailDoNotConfirmed()  throws Exception {
+        String requestJson = "{\"email\":\"john@example.com\",\"password\":\"pass123\"}";
+        User user=TestUtilUser.mockUser();
+        Mockito.when(userMapper.authRequestToUser(any())).thenReturn(user);
+        Mockito.when(checkCredentialUseCase.checkCredential(any())).thenThrow(new EmailNotConfirmedException("Email john@example.com couldn´t be confirm."));
+
+        mockMvc.perform(post("/v1/users/check")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(EMAIL_NOT_CONFIRMED.getCode()))
+                .andExpect(jsonPath("$.message").value(EMAIL_NOT_CONFIRMED.getMessage()))
+                .andExpect(jsonPath("$.details[0]").value(org.hamcrest.Matchers.containsString("Email john@example.com couldn´t be confirm.")));
+    }
+
+    @Test
+    @DisplayName("Expect UserNotFoundException When Email Do Not Exists")
+    void Expect_UserNotFoundException_When_EmailDoNotExists()  throws Exception {
+        String requestJson = "{\"email\":\"john@example.com\",\"password\":\"pass123\"}";
+        User user=TestUtilUser.mockUser();
+        Mockito.when(userMapper.authRequestToUser(any())).thenReturn(user);
+        Mockito.when(checkCredentialUseCase.checkCredential(any())).thenThrow(new UserNotFoundException("User Not Found: john@example.com"));
+
+        mockMvc.perform(post("/v1/users/check")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(USER_NOT_FOUND.getCode()))
+                .andExpect(jsonPath("$.message").value(USER_NOT_FOUND.getMessage()))
+                .andExpect(jsonPath("$.details[0]").value(org.hamcrest.Matchers.containsString("User Not Found: john@example.com")));
+    }
+
+    @Test
+    @DisplayName("Expect PasswordInvalidedException When Email Do Not Exists")
+    void Expect_PasswordInvalidedException_When_EmailDoNotExists()  throws Exception {
+        String requestJson = "{\"email\":\"john@example.com\",\"password\":\"pass123\"}";
+        User user=TestUtilUser.mockUser();
+        Mockito.when(userMapper.authRequestToUser(any())).thenReturn(user);
+        Mockito.when(checkCredentialUseCase.checkCredential(any())).thenThrow(new PasswordInvalidedException("Password don´t match."));
+
+        mockMvc.perform(post("/v1/users/check")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(PASSWORD_INVALIDED.getCode()))
+                .andExpect(jsonPath("$.message").value(PASSWORD_INVALIDED.getMessage()))
+                .andExpect(jsonPath("$.details[0]").value(org.hamcrest.Matchers.containsString("Password don´t match.")));
     }
 
     @Test

@@ -2,6 +2,7 @@ package com.fernando.fastticket_user_service.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fernando.fastticket_user_service.domain.enums.ErrorType;
+import com.fernando.fastticket_user_service.infrastructure.adapters.input.models.requests.AuthRequest;
 import com.fernando.fastticket_user_service.infrastructure.adapters.input.models.requests.UserRequest;
 import com.fernando.fastticket_user_service.infrastructure.adapters.output.persistence.models.PersonEntity;
 import com.fernando.fastticket_user_service.infrastructure.adapters.output.persistence.models.RolEntity;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -37,11 +39,13 @@ class UserIntegrationTest {
 
     private final UserRepository userRepository;
     private final RolRepository rolRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    UserIntegrationTest(UserRepository userRepository, RolRepository rolRepository){
+    UserIntegrationTest(UserRepository userRepository, RolRepository rolRepository, PasswordEncoder passwordEncoder ){
         this.userRepository=userRepository;
         this.rolRepository=rolRepository;
+        this.passwordEncoder=passwordEncoder;
    }
 
     @Container
@@ -109,5 +113,33 @@ class UserIntegrationTest {
                 .statusCode(400)
                 .body("code", equalTo("USER_002"))
                 .body("type", equalTo(ErrorType.FUNCTIONAL.name()));
+    }
+
+    @Test
+    @DisplayName("When Email And Password Are Checking Expect Return 200")
+    void When_EmailAndPasswordAreChecking_Expect_Return200() throws Exception{
+        userRepository.save(UserEntity.builder()
+                .email("example2@hotmail.com")
+                .password(passwordEncoder.encode("ollssds"))
+                .person(PersonEntity.builder().name("test")
+                        .lastName("test").sex("M").build())
+                .roles(Set.of(RolEntity.builder().id(1).code("USER").description("User").build()))
+                .confirmEmail(true)
+                .build());
+        AuthRequest rq=TestUtilUser.mockAuthRequest();
+        rq.setEmail("example2@hotmail.com");
+        String requestJson = objectMapper.writeValueAsString(rq);
+        given()
+                .contentType(ContentType.JSON)
+                .body(requestJson)
+                .when()
+                .post("/v1/users/check")
+                .then()
+                .statusCode(200)
+                .body("id", equalTo(3))
+                .body("email", equalTo("example2@hotmail.com"))
+                .body("fullName", equalTo("test test"))
+                .body("roles",hasItem("USER"));
+
     }
 }

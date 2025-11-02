@@ -1,7 +1,6 @@
 package com.fernando.fastticket_user_service.infrastructure.adapters.input;
 
-import com.fernando.fastticket_user_service.domain.exceptions.RolNotFoundException;
-import com.fernando.fastticket_user_service.domain.exceptions.UserEmailExistsException;
+import com.fernando.fastticket_user_service.domain.exceptions.*;
 import com.fernando.fastticket_user_service.infrastructure.adapters.input.models.reponses.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.bind.validation.BindValidationException;
@@ -64,6 +63,45 @@ public class GlobalControllerAdvice {
                 .code(ROL_NOT_FOUND.getCode())
                 .type(FUNCTIONAL)
                 .message(ROL_NOT_FOUND.getMessage())
+                .details(Collections.singletonList(e.getMessage()))
+                .timestamp(LocalDateTime.now().toString())
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(EmailNotConfirmedException.class)
+    public ErrorResponse handleEmailNotConfirmedException(EmailNotConfirmedException e){
+        logException(FUNCTIONAL.name(), EMAIL_NOT_CONFIRMED.getCode(), e.getMessage());
+        return ErrorResponse.builder()
+                .code(EMAIL_NOT_CONFIRMED.getCode())
+                .type(FUNCTIONAL)
+                .message(EMAIL_NOT_CONFIRMED.getMessage())
+                .details(Collections.singletonList(e.getMessage()))
+                .timestamp(LocalDateTime.now().toString())
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(PasswordInvalidedException.class)
+    public ErrorResponse handlePasswordInvalidedException(PasswordInvalidedException e){
+        logException(FUNCTIONAL.name(), PASSWORD_INVALIDED.getCode(), e.getMessage());
+        return ErrorResponse.builder()
+                .code(PASSWORD_INVALIDED.getCode())
+                .type(FUNCTIONAL)
+                .message(PASSWORD_INVALIDED.getMessage())
+                .details(Collections.singletonList(e.getMessage()))
+                .timestamp(LocalDateTime.now().toString())
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UserNotFoundException.class)
+    public ErrorResponse handleUserNotFoundException(UserNotFoundException e){
+        logException(FUNCTIONAL.name(), USER_NOT_FOUND.getCode(), e.getMessage());
+        return ErrorResponse.builder()
+                .code(USER_NOT_FOUND.getCode())
+                .type(FUNCTIONAL)
+                .message(USER_NOT_FOUND.getMessage())
                 .details(Collections.singletonList(e.getMessage()))
                 .timestamp(LocalDateTime.now().toString())
                 .build();
