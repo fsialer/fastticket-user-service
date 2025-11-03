@@ -1,6 +1,9 @@
 package com.fernando.fastticket_user_service.domain.chainresponsibility.auth_user;
 
 import com.fernando.fastticket_user_service.domain.models.User;
+import com.fernando.fastticket_user_service.domain.chainresponsibility.AuthContext;
+import com.fernando.fastticket_user_service.domain.chainresponsibility.AuthUserHandler;
+import com.fernando.fastticket_user_service.domain.chainresponsibility.CheckEmailConfirmHandler;
 import com.fernando.fastticket_user_service.infrastructure.adapters.output.persistence.models.UserEntity;
 import com.fernando.fastticket_user_service.domain.exceptions.EmailNotConfirmedException;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,10 +1,10 @@
 package com.fernando.fastticket_user_service.domain.services;
 
 import com.fernando.fastticket_user_service.application.ports.input.CheckCredentialUseCase;
-import com.fernando.fastticket_user_service.domain.chainresponsibility.auth_user.AuthContext;
-import com.fernando.fastticket_user_service.domain.chainresponsibility.auth_user.CheckEmailConfirmHandler;
-import com.fernando.fastticket_user_service.domain.chainresponsibility.auth_user.CheckPasswordHandler;
-import com.fernando.fastticket_user_service.domain.chainresponsibility.auth_user.FindUserHandler;
+import com.fernando.fastticket_user_service.domain.chainresponsibility.AuthContext;
+import com.fernando.fastticket_user_service.domain.chainresponsibility.CheckEmailConfirmHandler;
+import com.fernando.fastticket_user_service.domain.chainresponsibility.CheckPasswordHandler;
+import com.fernando.fastticket_user_service.domain.chainresponsibility.FindUserHandler;
 import com.fernando.fastticket_user_service.domain.models.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

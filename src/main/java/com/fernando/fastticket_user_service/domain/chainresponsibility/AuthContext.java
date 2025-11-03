@@ -1,4 +1,4 @@
-package com.fernando.fastticket_user_service.domain.chainresponsibility.auth_user;
+package com.fernando.fastticket_user_service.domain.chainresponsibility;
 
 import com.fernando.fastticket_user_service.domain.models.User;
 import lombok.*;

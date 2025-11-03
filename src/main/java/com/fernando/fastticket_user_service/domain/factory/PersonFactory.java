@@ -13,7 +13,7 @@ public class PersonFactory {
        String email = (String) data.getOrDefault("email","");
        String password = (String) data.getOrDefault("password", "default");
        boolean emailConfirm = (boolean) data.getOrDefault("confirmEmail", false);
-       Set<Rol> roles = (Set<Rol>) data.getOrDefault("roles",Set.of(Rol.builder().build()));
+       Set<Rol> roles = (Set<Rol>) data.getOrDefault("roles",Set.of(Rol.builder().code("N/A").build()));
        String name = (String) data.getOrDefault("name","N/A");
        String lastName = (String) data.getOrDefault("lastName","N/A");
        String sex = (String) data.getOrDefault("sex","N/A");

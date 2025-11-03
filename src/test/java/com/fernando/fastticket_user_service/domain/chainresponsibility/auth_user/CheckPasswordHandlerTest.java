@@ -2,6 +2,9 @@ package com.fernando.fastticket_user_service.domain.chainresponsibility.auth_use
 
 import com.fernando.fastticket_user_service.domain.exceptions.PasswordInvalidedException;
 import com.fernando.fastticket_user_service.domain.models.User;
+import com.fernando.fastticket_user_service.domain.chainresponsibility.AuthContext;
+import com.fernando.fastticket_user_service.domain.chainresponsibility.AuthUserHandler;
+import com.fernando.fastticket_user_service.domain.chainresponsibility.CheckPasswordHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

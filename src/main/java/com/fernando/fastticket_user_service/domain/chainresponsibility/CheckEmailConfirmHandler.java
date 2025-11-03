@@ -1,4 +1,4 @@
-package com.fernando.fastticket_user_service.domain.chainresponsibility.auth_user;
+package com.fernando.fastticket_user_service.domain.chainresponsibility;
 
 import com.fernando.fastticket_user_service.domain.exceptions.EmailNotConfirmedException;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,6 @@ public class CheckEmailConfirmHandler implements AuthUserHandler{
 
     @Override
     public void handle(AuthContext context) {
-        System.out.println(context.getStoredUser().isConfirmEmail());
         if(!context.getStoredUser().isConfirmEmail()){
             throw new EmailNotConfirmedException("Email "+context.getEmail()+" couldn´t be confirm.");
         }

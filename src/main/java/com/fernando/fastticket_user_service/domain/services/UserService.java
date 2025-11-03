@@ -1,6 +1,5 @@
 package com.fernando.fastticket_user_service.domain.services;
 
-import com.fernando.fastticket_user_service.application.ports.input.CheckCredentialUseCase;
 import com.fernando.fastticket_user_service.application.ports.input.RegisterUserUseCase;
 import com.fernando.fastticket_user_service.application.ports.output.UserPersistencePort;
 import com.fernando.fastticket_user_service.domain.models.User;
