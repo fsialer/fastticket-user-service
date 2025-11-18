@@ -9,21 +9,25 @@ import com.fernando.fastticket_user_service.infrastructure.adapters.output.persi
 import org.mapstruct.Mapper;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface UserPersistenceMapper {
     default User userEntityToUser(UserEntity userEntity){
-        return (User) PersonFactory.create(Map.of(
-                "id",userEntity.getId(),
-                "email",userEntity.getEmail(),
-                "password",userEntity.getPassword(),
-                "roles",userEntity.getRoles().stream()
-                        .map(rol-> new Rol(rol.getId(), rol.getCode(), rol.getDescription())).collect(Collectors.toSet()),
-                "confirmEmail",userEntity.getConfirmEmail(),
-                "name", userEntity.getPerson().getName(),
-                "lastName",userEntity.getPerson().getLastName(),
-                "sex",userEntity.getPerson().getSex()));
+        return Optional.ofNullable(userEntity)
+                .map(user->(User) PersonFactory.create(Map.of(
+                            "id",userEntity.getId(),
+                            "email",userEntity.getEmail(),
+                            "password",userEntity.getPassword(),
+                            "roles",userEntity.getRoles().stream()
+                                    .map(rol-> new Rol(rol.getId(), rol.getCode(), rol.getDescription())).collect(Collectors.toSet()),
+                            "confirmEmail",userEntity.getConfirmEmail(),
+                            "name", userEntity.getPerson().getName(),
+                            "lastName",userEntity.getPerson().getLastName(),
+                            "sex",userEntity.getPerson().getSex()))
+                )
+                .orElse(null);
     }
 
     default UserEntity userToUserEntity(User user){
